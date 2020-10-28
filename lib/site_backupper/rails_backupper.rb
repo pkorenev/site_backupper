@@ -88,7 +88,7 @@ module SiteBackupper
 
     def path_env_variable
       #"/home/pasha/.rvm/rubies/ruby-#{@ruby_version}/bin"
-      "#{@rvm_home}/gems/ruby-#{@ruby_version}/wrappers:/bin"
+      "#{@rvm_home}/gems/ruby-#{@ruby_version}/wrappers:/bin:/usr/bin"
     end
 
     def gem_home
