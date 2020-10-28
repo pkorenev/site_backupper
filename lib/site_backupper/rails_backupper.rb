@@ -19,7 +19,7 @@ module SiteBackupper
       database_config = fetch_database_config
       sql_file_path = self.sql_file_path(database_config)
       application_yml_file_path = "#{@project_directory}/config/application.yml"
-      files_and_folders_to_copy = ['public/system', 'public/ckeditor_assets', 'config/application.yml']
+      files_and_folders_to_copy = ['public/system', 'public/uploads', 'public/ckeditor_assets', 'config/application.yml']
 
       File.open(archive_file_path, "wb") do |file|
         SevenZipRuby::Writer.open(file) do |szr|
