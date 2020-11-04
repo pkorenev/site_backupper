@@ -23,9 +23,7 @@ module SiteBackupper
 
       File.open(archive_file_path, "wb") do |file|
         SevenZipRuby::Writer.open(file) do |szr|
-          file_path = relative_to_backup_archive_path(sql_file_path)
-          puts file_path
-          szr.add_file(file_path, as: File.basename(sql_file_path))
+          szr.add_file(sql_file_path, as: File.basename(sql_file_path))
 
           files_and_folders_to_copy.each do |rel_path|
             source_full_path = "#{@project_directory}/#{rel_path}"
@@ -63,13 +61,19 @@ module SiteBackupper
       puts run_command "echo $BUNDLE_GEMFILE"
       #command = "#{ruby_path} #{@project_directory}/bin/bundle --version"
       ruby_code = %Q( puts Rails.configuration.database_configuration["#{@rails_env}"].to_json )
-      database_config = JSON.parse(run_code_in_rails_console(ruby_code)).symbolize_keys
+      #ruby_code = "puts Rails.env"
+      command_result = run_code_in_rails_console(ruby_code)
+      begin
+        database_config = JSON.parse(command_result).symbolize_keys
+      rescue JSON::ParserError
+        puts "bad command result.\nruby code:\n#{ruby_code}\nresult:\n#{command_result}"
+      end
       #puts "Execute: #{command}"
       #`#{command}`
     end
 
     def run_code_in_rails_console(code)
-      run_command "cd #{@project_directory} && rails runner '#{code}'"
+      run_command "cd #{@project_directory} && bundle exec rails runner '#{code}'"
     end
 
     def export_env_variables_expression
@@ -92,13 +96,13 @@ module SiteBackupper
     end
 
     def gem_home
-      "/home/pasha/.rvm/gems/ruby-#{@ruby_version}"
+      "#{@rvm_home}/gems/ruby-#{@ruby_version}"
     end
 
     def run_command(command)
       return if !command || command == ''
       full_command = "#{export_env_variables_expression} && #{command}"
-      #puts "Execute: #{full_command}"
+      puts "Execute: #{full_command}"
       res = `#{full_command}`
       if res.is_a?(String) && res.end_with?("\n")
         res[0, res.length - 1]

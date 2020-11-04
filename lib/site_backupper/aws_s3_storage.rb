@@ -12,7 +12,7 @@ module SiteBackupper
     end
 
     def upload(source_path, key)
-      puts "AwsGlacierStorage: upload #{source_path} to #{key}"
+      puts "AwsS3Storage: upload #{source_path} to #{key}"
 
       File.open(source_path, 'rb') do |file|
         client.put_object(

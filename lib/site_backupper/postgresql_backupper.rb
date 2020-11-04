@@ -8,7 +8,7 @@ module SiteBackupper
       @username = username
       @password = password
       @options = options
-      @pg_dump_bin_path = pg_dump_bin_path.precence || Config.default_pg_dump_bin_path
+      @pg_dump_bin_path = pg_dump_bin_path.presence || Config.default_pg_dump_bin_path
     end
 
     def make_dump
